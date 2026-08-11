@@ -1,0 +1,32 @@
+name: Validate Wiki Layer
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check required files exist
+        run: |
+          test -f README.md
+          test -f scripts/setup-wiki-layer.sh
+          test -d templates
+          test -d wiki
+          test -f docs/structuring-agent-prompt.md
+          echo "All core files present"
+
+      - name: Make setup script executable
+        run: chmod +x scripts/setup-wiki-layer.sh
+
+      - name: Syntax check setup script
+        run: bash -n scripts/setup-wiki-layer.sh
+
+      - name: List structure
+        run: find . -type f | sort
